@@ -32,7 +32,6 @@ function CustomAccordion({ items, groupIndex = 0, styles = {
   }
 
   const paddingLeft = ((groupIndex + 1) * 5);
-  console.log("-" + paddingLeft)
 
   return items?.map((group, index) =>
   (
@@ -61,7 +60,7 @@ function CustomAccordion({ items, groupIndex = 0, styles = {
   ))
 }
 
-export default function Sidebar({ items = [], open = true, setOpen = () => { }, styles = {
+export default function Sidebar({ items = [], open = true, setOpen: toggleOpen = () => { }, styles = {
   container: "",
   accordion: {
     container: "",
@@ -73,7 +72,7 @@ export default function Sidebar({ items = [], open = true, setOpen = () => { }, 
     <aside className={twMerge('w-1/4 bg-white h-screen overflow-y-auto duration-150 relative pt-[48px]', styles?.container ?? "", open ? "translate-x-0 opacity-100" : "-translate-x-full opacity-25")}>
       <CustomAccordion items={items} groupIndex={0} styles={styles.accordion} />
 
-      <button className={twMerge("absolute top-0 right-2 block h-[48px] w-[48px] border-none focus:outline-none bg-transparent text-gray-700")} onClick={() => setOpen()}>x</button>
+      <button className={twMerge("absolute top-0 right-2 block h-[48px] w-[48px] border-none focus:outline-none bg-transparent text-gray-700")} onClick={() => toggleOpen()}>x</button>
     </aside>
   )
 }
