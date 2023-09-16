@@ -4,23 +4,24 @@ function CustomAccordion({ items, groupIndex = 0 }) {
   const detailsRef = useRef({});
 
   function onClick(e, index) {
-    console.log({
-      identifier: `${groupIndex}#${index}`,
-      elem: detailsRef.current[`${groupIndex}#${index}`]
-    })
     e.stopPropagation();
+    // open elements
+    // current element =>
     const detailElements =
       document.querySelectorAll(`details[open][id^="${groupIndex}#"]`);
-    console.log(detailsRef.current);
     if (detailsRef.current[`${groupIndex}#${index}`]) {
       if (detailsRef.current[`${groupIndex}#${index}`].open) {
         detailsRef.current[`${groupIndex}#${index}`].open = false;
       } else {
         detailsRef.current[`${groupIndex}#${index}`].open = true;
       }
+
       detailElements.forEach((element) => {
         if (detailsRef?.current[`${groupIndex}#${index}`].id !== element.id) {
           element.open = false;
+          // find all its children and close them too.
+          let openChildElements = element.querySelectorAll('details[open]');
+          openChildElements.forEach(child => child.open = false)
         }
       });
     }
@@ -41,7 +42,6 @@ function CustomAccordion({ items, groupIndex = 0 }) {
         <>
           <details key={index} id={`${groupIndex}#${index}`}
             ref={ref => detailsRef.current[`${groupIndex}#${index}`] = ref}>
-
             <summary className=''></summary>
             <CustomAccordion items={group.children ?? []} groupIndex={groupIndex + 1} />
           </details>
@@ -52,7 +52,7 @@ function CustomAccordion({ items, groupIndex = 0 }) {
   ))
 }
 
-export default function Sidebar({ open = false, setOpen, items = [] }) {
+export default function Sidebar({ items = [] }) {
   return (
     <div className='w-1/4 bg-white h-screen overflow-y-auto'>
       <CustomAccordion items={items} groupIndex={0} />
