@@ -51,16 +51,23 @@ const testItems = [
 ]
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [open, setOpen] = useState(false)
 
   return (
     <div style={{
       height: "100vh",
-      width: "100vw"
+      width: "100vw",
+      position: "relative"
     }}>
-      <Sidebar open={false} setOpen={() => { }} items={testItems}>
-
-      </Sidebar>
+      <button onClick={() => setOpen(prevState => !prevState)}>Toggle Navbar</button>
+      <Sidebar styles={{
+        container: "w-1/4 absolute top-0 left-0",
+        accordion: {
+          button: "block w-full border-none rounded-none hover:bg-gray-100 text-left",
+          container: "overflow-x-auto",
+          summary: ""
+        }
+      }} open={open} setOpen={() => setOpen(prevState => !prevState)} items={testItems} />
     </div>
   )
 }

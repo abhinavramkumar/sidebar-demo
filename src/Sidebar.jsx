@@ -1,8 +1,12 @@
-import React, { createRef, useRef } from 'react';
+import React, { useRef } from 'react';
+import { twMerge } from 'tailwind-merge';
 
-function CustomAccordion({ items, groupIndex = 0 }) {
+function CustomAccordion({ items, groupIndex = 0, styles = {
+  container: "",
+  button: "",
+  summary: ""
+} }) {
   const detailsRef = useRef({});
-
   function onClick(e, index) {
     e.stopPropagation();
     // open elements
@@ -27,23 +31,28 @@ function CustomAccordion({ items, groupIndex = 0 }) {
     }
   }
 
+  const paddingLeft = ((groupIndex + 1) * 5);
+  console.log("-" + paddingLeft)
+
   return items?.map((group, index) =>
   (
-    <div key={index}>
+    <div key={index} className={twMerge(styles?.container ?? "")}>
       {
         group.href ? (
-          <a href={group.href} className='block bg-transparent border-none text-gray-700' onClick={e => e.stopPropagation()}>{group.name}</a>
+          <a href={group.href} className={twMerge('block bg-transparent border-none text-gray-700 outline-none', styles?.button)} onClick={e => e.stopPropagation()}>{group.name}</a>
         ) : (
-          <button className='bg-transparent border-none text-gray-700' onClick={e => onClick(e, index)}>{group.name}</button>
+          <button className={twMerge('bg-transparent border-none text-gray-700 outline-none focus:outline-none', styles?.button ?? "")} onClick={e => onClick(e, index)}>{group.name}</button>
         )
       }
 
       {group?.children?.length > 0 ? (
         <>
-          <details key={index} id={`${groupIndex}#${index}`}
-            ref={ref => detailsRef.current[`${groupIndex}#${index}`] = ref}>
-            <summary className=''></summary>
-            <CustomAccordion items={group.children ?? []} groupIndex={groupIndex + 1} />
+          <details
+            key={index} id={`${groupIndex}#${index}`}
+            ref={ref => detailsRef.current[`${groupIndex}#${index}`] = ref}
+          >
+            <summary className={twMerge(styles.summary)}></summary>
+            <CustomAccordion items={group.children ?? []} groupIndex={groupIndex + 1} styles={styles} />
           </details>
         </>
       ) : null}
@@ -52,11 +61,19 @@ function CustomAccordion({ items, groupIndex = 0 }) {
   ))
 }
 
-export default function Sidebar({ items = [] }) {
+export default function Sidebar({ items = [], open = true, setOpen = () => { }, styles = {
+  container: "",
+  accordion: {
+    container: "",
+    button: "",
+    summary: ""
+  }
+} }) {
   return (
-    <div className='w-1/4 bg-white h-screen overflow-y-auto'>
-      <CustomAccordion items={items} groupIndex={0} />
-    </div>
+    <aside className={twMerge('w-1/4 bg-white h-screen overflow-y-auto duration-150 relative pt-[48px]', styles?.container ?? "", open ? "translate-x-0 opacity-100" : "-translate-x-full opacity-25")}>
+      <CustomAccordion items={items} groupIndex={0} styles={styles.accordion} />
 
+      <button className={twMerge("absolute top-0 right-2 block h-[48px] w-[48px] border-none focus:outline-none bg-transparent text-gray-700")} onClick={() => setOpen()}>x</button>
+    </aside>
   )
 }
